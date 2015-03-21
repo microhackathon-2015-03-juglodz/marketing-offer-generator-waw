@@ -28,5 +28,8 @@ public class Person {
 		this.lastName = lastName;
 	}
 	
+	public String getId(){
+		return firstName+"_"+lastName;
+	}
 	
 }

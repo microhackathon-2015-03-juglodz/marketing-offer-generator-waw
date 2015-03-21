@@ -108,6 +108,8 @@ dependencies {
     compile 'org.codehaus.gpars:gpars:1.2.1'
     compile 'net.sf.ehcache:ehcache:2.9.1'
     compile "com.ofg:micro-infra-spring-boot-starter:$microInfraSpringVersion"
+	compile 'org.mongodb:mongo-java-driver'
+	compile 'com.github.fakemongo:fongo:1.6.1'
 
     runtime 'cglib:cglib-nodep:3.1'
     runtime 'org.objenesis:objenesis:2.1'
