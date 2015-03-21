@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import com.mongodb.BasicDBObject;
 import com.ofg.twitter.model.LoanDecision;
 import com.ofg.twitter.model.MarketingOffer;
@@ -32,12 +35,23 @@ public class OffersController {
 	private OffersDao offersDao = new OffersDao();
 
 	private Logger log = LoggerFactory.getLogger(OffersController.class);
+	
+	private final MetricRegistry mr;
+	private final Counter generatedOffersCount;
+	
+	@Autowired
+	public OffersController(MetricRegistry metricRegistry) {
+		this.mr = metricRegistry;
+		this.generatedOffersCount = mr.counter("generatedOffers.count");
+	}
+	
 
 	@RequestMapping(value = "/marketing/{loanApplicationId}", method = PUT)
 	public void generateOfferings(@PathVariable @NotNull long loanApplicationId, @RequestBody LoanDecision loanDecision) {
 		log.debug("New offer for loanApplicationId: " + loanApplicationId);
 		offersDao.save(loanDecision.getPerson(), getOffer(loanDecision.getDecision()));
 		log.info("Gennereted offer for loanApplicationId: " + loanApplicationId);
+		generatedOffersCount.inc();
 	}
 
 	private String getOffer(String decision) {
