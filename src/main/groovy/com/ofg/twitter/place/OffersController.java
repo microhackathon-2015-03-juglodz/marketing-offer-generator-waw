@@ -34,18 +34,19 @@ public class OffersController {
 	private Logger log = LoggerFactory.getLogger(OffersController.class);
 
 	@RequestMapping(value = "/marketing/{loanApplicationId}", method = PUT)
-	public MarketingOffer generateOfferings(@PathVariable @NotNull long loanApplicationId, @RequestBody LoanDecision loanDecision) {
+	public void generateOfferings(@PathVariable @NotNull long loanApplicationId, @RequestBody LoanDecision loanDecision) {
 		log.debug("New offer for loanApplicationId: " + loanApplicationId);
-		MarketingOffer mo = offersDao.save(loanDecision.getPerson(), "Oddawaj kasę!");
+		offersDao.save(loanDecision.getPerson(), "Oddawaj kasę!");
 		log.info("Gennereted offer for loanApplicationId: " + loanApplicationId);
-		return mo;
-
 	}
 
 	@RequestMapping(value = "/marketing/{firstName}_{lastName}", method = GET)
+	
 	public MarketingOffer getOfferings(@PathVariable @NotNull String firstName, @PathVariable @NotNull String lastName) {
+		String user = firstName + "_" + lastName;
+		log.debug("Trying to get offer for user: " + user);
 		try {
-			return offersDao.get(firstName + "_" + lastName);
+			return offersDao.get(user);
 		} catch (Exception e) {
 			return null;
 		}
