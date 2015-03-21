@@ -36,12 +36,22 @@ public class OffersController {
 	@RequestMapping(value = "/marketing/{loanApplicationId}", method = PUT)
 	public void generateOfferings(@PathVariable @NotNull long loanApplicationId, @RequestBody LoanDecision loanDecision) {
 		log.debug("New offer for loanApplicationId: " + loanApplicationId);
-		offersDao.save(loanDecision.getPerson(), "Oddawaj kasę!");
+		offersDao.save(loanDecision.getPerson(), getOffer(loanDecision.getDecision()));
 		log.info("Gennereted offer for loanApplicationId: " + loanApplicationId);
 	}
 
+	private String getOffer(String decision) {
+		if (decision.equalsIgnoreCase("failure")) {
+			return "Conntact your local Kruk agency first.";
+		} else if (decision.equalsIgnoreCase("manual")) {
+			return "We need some time to process your request. Your understanding will be appreciated.";
+		} else if (decision.equalsIgnoreCase("success")) {
+			return "Need more money? Now, you can have more money with our special offer!";
+		}
+		return "Try with Provident!";
+	}
+
 	@RequestMapping(value = "/marketing/{firstName}_{lastName}", method = GET)
-	
 	public MarketingOffer getOfferings(@PathVariable @NotNull String firstName, @PathVariable @NotNull String lastName) {
 		String user = firstName + "_" + lastName;
 		log.debug("Trying to get offer for user: " + user);
